@@ -1,0 +1,180 @@
+<!--
+ * @Description: 三行三列棋盘
+ * @Autor: lida
+ * @Date: 2020-11-23 15:49:05
+ * @LastEditors: lida
+ * @LastEditTime: 2020-12-02 20:40:30
+ * @FilePath: \Frontend-07-Template\Week01\TicTacToe.html
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+    <title></title>
+    <style>
+      .cell {
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        text-align: center;
+        background-color: #999;
+        display: inline-block;
+        margin: 2px;
+        font-size: 50px;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+  <script>
+    const pattern = [
+      [0, 0, 0],
+      [0, 0, 0],
+      [0, 0, 0]
+    ]
+    let color = 1,
+      win = false // 游戏结束条件，双方有一人赢即结束
+    function show(arr) {
+      let app = document.getElementById('app')
+      app.innerHTML = ''
+      for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+          let cell = document.createElement('div')
+          cell.className = 'cell'
+          cell.addEventListener('click', () => {
+            if (win) {
+              // 游戏已结束
+              return
+            }
+            if (arr[i][j] > 0) {
+              return
+            }
+            arr[i][j] = color
+            cell.innerHTML = arr[i][j] == 2 ? 'X' : arr[i][j] == 1 ? 'O' : ''
+            if (checkWin(arr, i, j)) {
+              // 游戏结束
+              win = true
+              const aa = color == 2 ? 'X' : 'O'
+              return alert(aa + ' win .')
+            }
+            color = 3 - color
+
+            if ((position = willWin(arr, color))) {
+              const aa = color == 2 ? 'X' : 'O'
+              console.log(aa + ' will win . at ' + JSON.stringify(position))
+            }
+            console.log(bestChoice(pattern, color))
+          })
+          app.appendChild(cell)
+        }
+        app.appendChild(document.createElement('div'))
+      }
+    }
+
+    function checkWin(arr, x, y) {
+      // 检查本身所在行、列、斜 方向上的值是否一样
+      function checkX() {
+        // 检查行方向
+        let win = true
+        for (let i = 0; i < arr[x].length; i++) {
+          if (arr[x][i] != color) {
+            return (win = false)
+          }
+        }
+        return win
+      }
+      function checkY() {
+        // 检查列方向
+        let win = true
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i][y] != color) {
+            return (win = false)
+          }
+        }
+        return win
+      }
+      function checkXY() {
+        // 检查正斜线方向
+        let win = true
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i][i] != color) {
+            return (win = false)
+          }
+        }
+        return win
+      }
+      function checkYX() {
+        // 检查反斜线方向
+        let win = true
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i][2 - i] != color) {
+            return (win = false)
+          }
+        }
+        return win
+      }
+      if (checkX() || checkY() || checkXY() || checkYX()) {
+        return true
+      }
+      return false
+    }
+    function cloneObj(arr) {
+      return JSON.parse(JSON.stringify(arr))
+    }
+    function willWin(arr, color) {
+      // 预判
+      for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+          if (arr[i][j]) {
+            continue
+          }
+          let tem = cloneObj(arr)
+          tem[i][j] = color
+          if (checkWin(tem, i, j)) {
+            return [i, j]
+          }
+        }
+      }
+      return null
+    }
+    function bestChoice(arr, color) {
+      // result 1: 赢, 0: 平，-1 : 输
+      let p
+      if ((p = willWin(arr, color))) {
+        return {
+          point: p,
+          result: 1
+        }
+      }
+      let result = -2,
+        point = null
+      for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr[i].length; j++) {
+          if (arr[i][j]) {
+            continue
+          }
+          let tem = cloneObj(arr)
+          tem[i][j] = color
+          let r = bestChoice(tem, 3 - color).result
+          if (-r > result) {
+            point = [i, j]
+            result = -r
+          }
+        }
+      }
+      return {
+        point,
+        result: point ? result : 0
+      }
+    }
+    show(pattern)
+    console.log(bestChoice(pattern, color))
+  </script>
+</html>

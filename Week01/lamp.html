@@ -1,0 +1,59 @@
+<!--
+ * @Description: 
+ * @Autor: lida
+ * @Date: 2020-12-03 20:20:53
+ * @LastEditors: lida
+ * @LastEditTime: 2020-12-03 20:24:26
+ * @FilePath: \Frontend-07-Template\Week01\lamp.html
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+  </head>
+  <body></body>
+  <script>
+    /*
+     * @Description: 红绿灯循环
+     * @Autor: lida
+     * @Date: 2020-12-03 20:14:54
+     * @LastEditors: lida
+     * @LastEditTime: 2020-12-03 20:20:18
+     * @FilePath: \Frontend-07-Template\Week01\lamp.js
+     */
+    // 0 灭 1 亮
+    const lamps = [0, 0, 0]
+    function setLamp(j) {
+      for (let i = 0; i < lamps.length; i++) {
+        if (i == j) {
+          lamps[i] = 1
+        } else {
+          lamps[i] = 0
+        }
+      }
+      console.log(lamps)
+    }
+    function sleep(t) {
+      return new Promise((resolve, reject) => {
+        setTimeout(resolve, t)
+      })
+    }
+    async function go() {
+      setLamp(0)
+      while (true) {
+        await sleep(2000)
+        setLamp(1)
+        await sleep(1000)
+        setLamp(2)
+        await sleep(4000)
+        setLamp(0)
+      }
+    }
+    go()
+  </script>
+</html>
