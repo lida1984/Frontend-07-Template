@@ -3,7 +3,7 @@
  * @Autor: lida
  * @Date: 2020-11-23 15:49:05
  * @LastEditors: lida
- * @LastEditTime: 2020-12-02 20:40:30
+ * @LastEditTime: 2020-12-03 20:59:54
  * @FilePath: \Frontend-07-Template\Week01\TicTacToe.html
 -->
 <!DOCTYPE html>
@@ -48,6 +48,8 @@
         for (let j = 0; j < arr[i].length; j++) {
           let cell = document.createElement('div')
           cell.className = 'cell'
+          cell.innerHTML = arr[i][j] == 2 ? 'X' : arr[i][j] == 1 ? 'O' : ''
+
           cell.addEventListener('click', () => {
             if (win) {
               // 游戏已结束
@@ -64,13 +66,13 @@
               const aa = color == 2 ? 'X' : 'O'
               return alert(aa + ' win .')
             }
+            console.log(bestChoice(pattern, color))
             color = 3 - color
 
             if ((position = willWin(arr, color))) {
               const aa = color == 2 ? 'X' : 'O'
               console.log(aa + ' will win . at ' + JSON.stringify(position))
             }
-            console.log(bestChoice(pattern, color))
           })
           app.appendChild(cell)
         }
@@ -164,8 +166,8 @@
           tem[i][j] = color
           let r = bestChoice(tem, 3 - color).result
           if (-r > result) {
-            point = [i, j]
             result = -r
+            point = [i, j]
           }
         }
       }
