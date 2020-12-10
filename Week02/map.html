@@ -3,7 +3,7 @@
  * @Autor: lida
  * @Date: 2020-12-08 18:11:12
  * @LastEditors: lida
- * @LastEditTime: 2020-12-09 18:23:08
+ * @LastEditTime: 2020-12-10 09:05:51
  * @FilePath: \Frontend-07-Template\Week02\map.html
 -->
 <!DOCTYPE html>
@@ -34,6 +34,9 @@
     <button onclick="saveData()">save</button>
   </body>
   <script>
+    /**
+     * 排序结构
+     */
     class Sorted {
       constructor(data, compare) {
         this.data = data.slice()
@@ -55,6 +58,9 @@
       }
       give(v) {
         this.data.push(v)
+      }
+      get length() {
+        return this.data.length
       }
     }
   </script>
@@ -133,27 +139,38 @@
     async function findPath(map, start, end) {
       // 找到或者queue 队列为空就退出
       let table = Object.create(map) // 保存路径,反推路径
-      var queue = [start]
+      //   var queue = [start]
+      var queue = new Sorted(
+        [start],
+        (a, b) => distance(a, end) - distance(b, end)
+      )
 
+      function distance(arr1, arr2) {
+        return Math.pow(arr1[0] - arr2[0], 2) + Math.pow(arr1[1] - arr2[1], 2)
+      }
       async function insert(x, y, pre) {
         if (x < 0 || x >= 100 || y < 0 || y >= 100) {
           return
         }
         if (table[y * 100 + x]) return
-        // await sleep(20)
+
+        await sleep(10)
         app.children[y * 100 + x].style.backgroundColor = 'lightgreen'
+        // 存储前一个坐标
         table[y * 100 + x] = pre
-        queue.push([x, y])
+        queue.give([x, y])
+        // queue.push([x, y])
       }
       while (queue.length) {
-        let [x, y] = queue.shift()
+        let [x, y] = queue.take()
+        // let [x, y] = queue.shift()
         // console.log(x, y)
         if (x === end[0] && y === end[1]) {
           let path = []
           while (x != start[0] || y != start[1]) {
             path.push(map[y * 100 + x])
             ;[x, y] = table[y * 100 + x]
-            await sleep(20)
+            await sleep(10)
             app.children[y * 100 + x].style.backgroundColor = 'red'
           }
           return path
