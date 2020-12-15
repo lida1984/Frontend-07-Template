@@ -1,0 +1,171 @@
+<!--
+ * @Description: LL 算法构建 ast (词法语法分析)
+ * @Autor: lida
+ * @Date: 2020-12-14 16:08:06
+ * @LastEditors: lida
+ * @LastEditTime: 2020-12-14 20:13:58
+ * @FilePath: \Frontend-07-Template\Week03\LL-ast.html
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
+    />
+  </head>
+  <body></body>
+  <script>
+    const reg = /([0-9\.]+)|([ \t]+)|([\r\n]+)|(\*)|(\/)|(\+)|(\-)/g
+    const dict = ['Number', 'Whitespace', 'LineTerminator', '*', '/', '+', '-']
+    function* tokenize(source) {
+      let result = null
+      let lastIndex = 0
+      while (true) {
+        lastIndex = reg.lastIndex
+        result = reg.exec(source)
+        console.log(result)
+        if (!result) break
+        if (reg.lastIndex - lastIndex > result[0].length) {
+          break
+        }
+        let token = {
+          type: null,
+          value: null
+        }
+        for (let i = 1; i <= dict.length; i++) {
+          if (result[i]) {
+            token.type = dict[i - 1]
+          }
+        }
+        token.value = result[0]
+        yield token
+      }
+      yield {
+        type: 'EOF'
+      }
+    }
+    let source = []
+    let str = '1+2 * 4 / 2+3'
+    for (let token of tokenize(str)) {
+      //   console.log(token)
+      if (token.type !== 'Whitespace' && token.type !== 'LineTerminator') {
+        source.push(token)
+      }
+    }
+    function Expression(source) {
+      if (
+        source[0].type === 'AdditiveExpression' &&
+        source[1] &&
+        source[1].type === 'EOF'
+      ) {
+        let node = {
+          type: 'Expression',
+          children: [source.shift(), source.shift()]
+        }
+        source.unshift(node)
+        return node
+      }
+      AddExpression(source)
+      return Expression(source)
+    }
+    function AddExpression() {
+      if (source[0].type === 'MultiplicativeExpression') {
+        let node = {
+          type: 'AdditiveExpression',
+          children: [source[0]]
+        }
+        source[0] = node
+        return AddExpression(source)
+      }
+      if (
+        source[0].type === 'AdditiveExpression' &&
+        source[1] &&
+        source[1].type === '+'
+      ) {
+        let node = {
+          type: 'AdditiveExpression',
+          oparator: '+',
+          children: []
+        }
+        node.children.push(source.shift())
+        node.children.push(source.shift())
+        MultiExpression(source)
+        node.children.push(source.shift())
+        source.unshift(node)
+        return AddExpression(source)
+      }
+      if (
+        source[0].type === 'AdditiveExpression' &&
+        source[1] &&
+        source[1].type === '-'
+      ) {
+        let node = {
+          type: 'AdditiveExpression',
+          oparator: '-',
+          children: []
+        }
+        node.children.push(source.shift())
+        node.children.push(source.shift())
+        MultiExpression(source)
+        node.children.push(source.shift())
+        source.unshift(node)
+        return AddExpression(source)
+      }
+      if (source[0].type === 'AdditiveExpression') {
+        return source[0]
+      }
+      MultiExpression(source)
+      return AddExpression(source)
+    }
+    function MultiExpression(source) {
+      if (source[0].type === 'Number') {
+        let node = {
+          type: 'MultiplicativeExpression',
+          children: [source[0]]
+        }
+        source[0] = node
+        return MultiExpression(source)
+      }
+      if (
+        source[0].type === 'MultiplicativeExpression' &&
+        source[1] &&
+        source[1].type === '*'
+      ) {
+        let node = {
+          type: 'MultiplicativeExpression',
+          oparator: '*',
+          children: []
+        }
+        node.children.push(source.shift())
+        node.children.push(source.shift())
+        node.children.push(source.shift())
+        source.unshift(node)
+        return MultiExpression(source)
+      }
+      if (
+        source[0].type === 'MultiplicativeExpression' &&
+        source[1] &&
+        source[1].type === '/'
+      ) {
+        let node = {
+          type: 'MultiplicativeExpression',
+          oparator: '/',
+          children: []
+        }
+        node.children.push(source.shift())
+        node.children.push(source.shift())
+        node.children.push(source.shift())
+        source.unshift(node)
+        return MultiExpression(source)
+      }
+      if (source[0].type === 'MultiplicativeExpression') {
+        return source[0]
+      }
+      return MultiExpression(source)
+    }
+    console.log(Expression(source))
+  </script>
+</html>
