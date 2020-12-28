@@ -1,0 +1,57 @@
+<!--
+ * @Description: 字符串分析算法-字典树
+ * @Autor: lida
+ * @Date: 2020-12-14 16:08:06
+ * @LastEditors: lida
+ * @LastEditTime: 2020-12-23 18:53:07
+ * @FilePath: \Frontend-07-Template\Week04\字典数.html
+-->
+<script>
+  let $ = Symbol('$')
+  class Trie {
+    // 字典树
+    constructor() {
+      this.root = Object.create(null)
+    }
+    insert(word) {
+      let node = this.root
+      for (let w of word) {
+        if (!node[w]) {
+          node[w] = Object.create(null)
+        }
+
+        node = node[w]
+      }
+      if (!($ in node)) {
+        node[$] = 0
+      }
+      node[$]++
+    }
+    most() {
+      let max = 0
+      let maxWord = null
+      let visit = (node, word) => {
+        if (node[$] && node[$] > max) {
+          max = node[$]
+          maxWord = word
+        }
+        for (let p in node) {
+          visit(node[p], word + p)
+        }
+      }
+      visit(this.root, '')
+    }
+  }
+  function randomWord(len) {
+    var s = ''
+    for (let i = 0; i < len; i++) {
+      s += String.fromCharCode(Math.random() * 26 + 'a'.charCodeAt(0))
+    }
+    return s
+  }
+  let trie = new Trie()
+  for (let i = 0; i < 1; i++) {
+    trie.insert('abcd')
+  }
+  console.log(trie.root)
+</script>
