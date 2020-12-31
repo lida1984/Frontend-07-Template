@@ -1,0 +1,89 @@
+<!--
+ * @Description: Proxy 代理; 非常危险的特性
+ * @Autor: lida
+ * @Date: 2020-12-28 13:50:55
+ * @LastEditors: lida
+ * @LastEditTime: 2020-12-29 19:40:56
+ * @FilePath: \Frontend-07-Template\Week05\proxy.html
+-->
+<input id="r" type="range" min="0" max="255" />
+<input id="g" type="range" min="0" max="255" />
+<input id="b" type="range" min="0" max="255" />
+<div id="color" style="width: 200px; height: 200px"></div>
+<script>
+  const obj = {
+    r: 1,
+    g: 1,
+    b: 1
+  }
+  let callbacks = new Map()
+  let reactives = new Map()
+  let usedReactives = []
+  const pro = reactive(obj)
+  const inputR = document.getElementById('r')
+  const inputG = document.getElementById('g')
+  const inputB = document.getElementById('b')
+  const colorDiv = document.getElementById('color')
+  inputR.addEventListener('input', function (e) {
+    pro.r = e.target.value
+  })
+  inputG.addEventListener('input', function (e) {
+    pro.g = e.target.value
+  })
+  inputB.addEventListener('input', function (e) {
+    pro.b = e.target.value
+  })
+
+  effect(() => {
+    inputR.value = pro.r
+    inputG.value = pro.g
+    inputB.value = pro.b
+    colorDiv.style.background = `rgb(${pro.r},${pro.g},${pro.b})`
+  })
+  function effect(cb) {
+    usedReactives = []
+    cb()
+    console.log(usedReactives)
+    for (let rea of usedReactives) {
+      const obj = rea[0],
+        prop = rea[1]
+      if (!callbacks.has(obj)) {
+        callbacks.set(obj, new Map())
+      }
+
+      if (!callbacks.get(obj).has(prop)) {
+        callbacks.get(obj).set(prop, [])
+      }
+      callbacks.get(obj).get(prop).push(cb)
+    }
+  }
+  function reactive(obj) {
+    if (reactives.has(obj)) {
+      return reactives.get(obj)
+    }
+    const proxy = new Proxy(obj, {
+      set(o, prop, val) {
+        o[prop] = val
+        let obj, arr
+        if ((obj = callbacks.get(o))) {
+          if ((arr = obj.get(prop))) {
+            arr.map((cb) => {
+              console.log('执行了')
+              cb()
+            })
+          }
+        }
+        return true
+      },
+      get(o, prop) {
+        usedReactives.push([o, prop])
+        if (typeof o[prop] === 'object') {
+          return reactive(o[prop])
+        }
+        return o[prop]
+      }
+    })
+    reactives.set(obj, proxy)
+    return proxy
+  }
+</script>
