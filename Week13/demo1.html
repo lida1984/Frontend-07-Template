@@ -1,0 +1,54 @@
+<!--
+ * @Description: 
+ * @Autor: lida
+ * @Date: 2021-02-23 09:20:04
+ * @LastEditors: lida
+ * @LastEditTime: 2021-03-03 11:40:43
+ * @FilePath: \Frontend-07-Template\Week13\demo1.html
+-->
+<div class="main">
+  <dfn>hi hello</dfn>
+  <details>ddd</details>
+  <code>
+    <pre>
+      &lt;html>
+        &lt;body>
+        &lt;/body>
+      &lt;/html>
+    </pre>
+  </code>
+  <div id="demo">
+    <a href="">1</a>
+    <div>2</div>
+    <span>3</span>
+    <p>4</p>
+  </div>
+</div>
+<style>
+  .main {
+    padding: 20px;
+  }
+  #demo {
+    color: red;
+  }
+</style>
+<script>
+  const element = document.getElementById('demo')
+  function reverseChild(element) {
+    let l = element.childNodes.length
+    while (l-- > 0) {
+      element.appendChild(element.childNodes[l])
+    }
+  }
+  function reverseChild2(element) {
+    let range = new Range()
+    range.selectNodeContents(element)
+    let fragme = range.extractContents() // element 移除 子元素
+    let l = fragme.childNodes.length
+    while (l-- > 0) {
+      fragme.appendChild(fragme.childNodes[l])
+    }
+    element.appendChild(fragme)
+  }
+  reverseChild2(element)
+</script>
