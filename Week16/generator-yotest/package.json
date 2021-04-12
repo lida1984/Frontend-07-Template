@@ -1,0 +1,22 @@
+{
+  "name": "generator-yotest",
+  "version": "1.0.0",
+  "description": "<!--\r  * @Description:\r  * @Autor: lida\r  * @Date: 2020-11-27 13:57:18\r  * @LastEditors: lida\r  * @LastEditTime: 2021-03-30 13:34:13\r  * @FilePath: \\Frontend-07-Template\\Week16\\README.md\r -->",
+  "main": "generators/app/index.js",
+  "scripts": {
+    "dev": "./node_modules/.bin/yo ",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "files": [
+    "generators"
+  ],
+  "keywords": ["yeoman-generator"],
+  "dependencies": {
+    "generator-fountain-webapp": "^1.0.0",
+    "yeoman-environment": "^3.2.0",
+    "yeoman-generator": "^5.2.0",
+    "yo": "^3.1.1"
+  }
+}

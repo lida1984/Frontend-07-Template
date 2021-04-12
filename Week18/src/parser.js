@@ -3,8 +3,8 @@
  * @Autor: lida
  * @Date: 2021-01-25 19:09:09
  * @LastEditors: lida
- * @LastEditTime: 2021-01-29 19:54:32
- * @FilePath: \Frontend-07-Template\Week09\parser.js
+ * @LastEditTime: 2021-04-09 10:42:36
+ * @FilePath: \Frontend-07-Template\Week18\src\parser.js
  */
 const css = require('css')
 let currrentTextNode = null
@@ -219,11 +219,12 @@ function selfClosingStartTag(c) {
     return
   }
 }
-module.exports.parseHTML = function (html) {
+export function parseHTML(html) {
   console.log(html)
   let state = data
   for (let c of html) {
     state = state(c)
   }
   state = state(EOF)
+  return stack[0]
 }
